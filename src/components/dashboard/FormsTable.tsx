@@ -1,10 +1,6 @@
-'use client';
-
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { FileText } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { useEffect, useState } from 'react';
-import { useAuth } from '@/lib/hooks';
 
 type Form = {
   id: string;
@@ -15,48 +11,7 @@ type Form = {
   submittedAt: string;
 };
 
-export function FormsTable({ initialForms }: { initialForms: Form[] }) {
-  const [forms, setForms] = useState<Form[]>(initialForms);
-  const { userPhone } = useAuth();
-
-  useEffect(() => {
-    async function fetchForms() {
-      if (userPhone) {
-        // Fetch forms for the current user
-        const response = await fetch(`/api/forms?phone=${userPhone}`);
-        if (response.ok) {
-          const data = await response.json();
-          setForms(data);
-        }
-      }
-    }
-    fetchForms();
-  }, [userPhone]); // Re-fetch when userPhone is available or changes
-
-  useEffect(() => {
-    // This effect is to listen for the custom event and refetch forms
-    const handleFormSubmitted = () => {
-      async function refetchForms() {
-        if (userPhone) {
-          const response = await fetch(`/api/forms?phone=${userPhone}`);
-          if (response.ok) {
-            const data = await response.json();
-            setForms(data);
-          }
-        }
-      }
-      refetchForms();
-    };
-
-    window.addEventListener('form-submitted', handleFormSubmitted);
-
-    // Cleanup the event listener when the component unmounts
-    return () => {
-      window.removeEventListener('form-submitted', handleFormSubmitted);
-    };
-  }, [userPhone]);
-
-
+export function FormsTable({ forms }: { forms: Form[] }) {
   if (!forms || forms.length === 0) {
     return (
         <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-12 text-center">

@@ -49,8 +49,8 @@ export function AddForm() {
         });
         form.reset();
         
-        // Instead of router.refresh(), dispatch a custom event
-        window.dispatchEvent(new CustomEvent('form-submitted'));
+        // Refresh the server components on the page to refetch data
+        router.refresh();
 
       } else if (result.error) {
         toast({

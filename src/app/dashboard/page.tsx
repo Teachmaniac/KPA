@@ -1,13 +1,16 @@
 import { AddForm } from '@/components/dashboard/AddForm';
 import { FormsTable } from '@/components/dashboard/FormsTable';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-
-// No longer need getForms or headers here
+import { getForms } from '@/lib/actions';
+import { headers } from 'next/headers';
 
 export default async function DashboardPage() {
-  // The initial fetch is now handled inside FormsTable to ensure it can re-fetch.
-  // We can pass an empty array initially.
-  const initialForms = [];
+  const headerList = headers();
+  // The phone number is passed from the layout after client-side auth check
+  const phone = headerList.get('x-user-phone');
+
+  // Fetch forms on the server. This will re-run when the page is refreshed.
+  const { forms } = phone ? await getForms(phone) : { forms: [] };
 
   return (
     <div className="container mx-auto grid gap-12">
@@ -31,8 +34,7 @@ export default async function DashboardPage() {
             </CardDescription>
         </CardHeader>
         <CardContent>
-            {/* FormsTable is now a client component and will fetch its own data */}
-            <FormsTable initialForms={initialForms} />
+            <FormsTable forms={forms} />
         </CardContent>
       </Card>
     </div>
