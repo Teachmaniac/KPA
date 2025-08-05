@@ -111,7 +111,7 @@ export function AddForm() {
             <FormItem>
               <FormLabel>Amount</FormLabel>
               <FormControl>
-                <Input type="number" placeholder="1000" {...field} />
+                <Input type="number" placeholder="1000" onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)} value={field.value} />
               </FormControl>
               <FormMessage />
             </FormItem>
