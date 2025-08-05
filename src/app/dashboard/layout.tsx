@@ -1,22 +1,38 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Header } from '@/components/dashboard/Header';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  const pathname = usePathname();
   const [isAuth, setIsAuth] = useState(false);
+  const [userPhone, setUserPhone] = useState<string | null>(null);
 
   useEffect(() => {
-    const userPhone = localStorage.getItem('kpa-user-phone');
-    if (!userPhone) {
+    const phone = localStorage.getItem('kpa-user-phone');
+    if (!phone) {
       router.replace('/');
     } else {
       setIsAuth(true);
+      setUserPhone(phone);
     }
   }, [router]);
+
+  // A simple way to pass client-side state (phone) to server components
+  // by rewriting the URL with a header. A more robust solution might use
+  // a proper session management system.
+  useEffect(() => {
+      if (isAuth && userPhone) {
+          const headers = new Headers();
+          headers.set('x-user-phone', userPhone);
+          // We use router.replace to re-trigger the server render with the new header
+          // This is a pattern to pass client-info to server components.
+          router.replace(pathname);
+      }
+  }, [isAuth, userPhone, pathname, router]);
 
   if (!isAuth) {
     return (

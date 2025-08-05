@@ -1,11 +1,7 @@
-'use client';
+'use server';
 
-import { useEffect, useState } from 'react';
-import { useAuth } from '@/lib/hooks';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, TableCaption } from '@/components/ui/table';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { AlertCircle, FileText } from 'lucide-react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { FileText } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 type Form = {
@@ -17,60 +13,13 @@ type Form = {
   submittedAt: string;
 };
 
-export function FormsTable() {
-  const { userPhone } = useAuth();
-  const [forms, setForms] = useState<Form[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+type FormsTableProps = {
+    initialForms: Form[];
+}
 
-  useEffect(() => {
-    if (userPhone) {
-      const fetchForms = async () => {
-        setIsLoading(true);
-        setError(null);
-        try {
-          const response = await fetch(`/api/forms?phone=${userPhone}`);
-          if (!response.ok) {
-            throw new Error('Failed to fetch forms data.');
-          }
-          const data = await response.json();
-          setForms(data);
-        } catch (err) {
-            if (err instanceof Error) {
-                setError(err.message);
-            } else {
-                setError('An unknown error occurred.');
-            }
-        } finally {
-          setIsLoading(false);
-        }
-      };
-
-      fetchForms();
-    }
-  }, [userPhone]);
-
-  if (isLoading) {
-    return (
-      <div className="space-y-2">
-        <Skeleton className="h-10 w-full" />
-        <Skeleton className="h-10 w-full" />
-        <Skeleton className="h-10 w-full" />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <Alert variant="destructive">
-        <AlertCircle className="h-4 w-4" />
-        <AlertTitle>Error</AlertTitle>
-        <AlertDescription>{error}</AlertDescription>
-      </Alert>
-    );
-  }
-
-  if (forms.length === 0) {
+export async function FormsTable({ initialForms }: FormsTableProps) {
+  
+  if (!initialForms || initialForms.length === 0) {
     return (
         <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-12 text-center">
             <FileText className="mx-auto h-12 w-12 text-muted-foreground" />
@@ -92,7 +41,7 @@ export function FormsTable() {
             </TableRow>
         </TableHeader>
         <TableBody>
-            {forms.map((form) => (
+            {initialForms.map((form) => (
             <TableRow key={form.id}>
                 <TableCell className="font-medium">{form.customerName}</TableCell>
                 <TableCell>{form.projectName}</TableCell>
