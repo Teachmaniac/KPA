@@ -5,12 +5,14 @@ import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { Header } from '@/components/dashboard/Header';
 import { Skeleton } from '@/components/ui/skeleton';
-import { FormRefreshProvider } from '@/lib/hooks';
+import { FormRefreshContext } from '@/lib/hooks';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const [isAuth, setIsAuth] = useState(false);
+  const [refreshCount, setRefreshCount] = useState(0);
+  const refresh = () => setRefreshCount(count => count + 1);
 
   useEffect(() => {
     const phone = localStorage.getItem('kpa-user-phone');
@@ -39,11 +41,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }
 
   return (
-    <FormRefreshProvider>
+    <FormRefreshContext.Provider value={{ refreshCount, refresh }}>
       <div className="flex min-h-screen w-full flex-col bg-background">
         <Header />
         <main className="flex-1 p-4 md:p-8">{children}</main>
       </div>
-    </FormRefreshProvider>
+    </FormRefreshContext.Provider>
   );
 }

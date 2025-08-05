@@ -1,4 +1,3 @@
-
 'use client';
 import { useState, useEffect, createContext, useContext } from 'react';
 
@@ -7,7 +6,6 @@ export function useAuth() {
   const [userPhone, setUserPhone] = useState<string | null>(null);
 
   useEffect(() => {
-    // This code runs only on the client
     const phone = localStorage.getItem('kpa-user-phone');
     if (phone) {
       setUserPhone(phone);
@@ -23,18 +21,7 @@ interface FormRefreshContextType {
   refresh: () => void;
 }
 
-const FormRefreshContext = createContext<FormRefreshContextType | undefined>(undefined);
-
-export function FormRefreshProvider({ children }: { children: React.ReactNode }) {
-  const [refreshCount, setRefreshCount] = useState(0);
-  const refresh = () => setRefreshCount(count => count + 1);
-
-  return (
-    <FormRefreshContext.Provider value={{ refreshCount, refresh }}>
-      {children}
-    </FormRefreshContext.Provider>
-  );
-}
+export const FormRefreshContext = createContext<FormRefreshContextType | undefined>(undefined);
 
 export function useFormRefresh() {
   const context = useContext(FormRefreshContext);
