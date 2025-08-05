@@ -9,7 +9,9 @@ export function useAuth() {
   useEffect(() => {
     // This code runs only on the client
     const phone = localStorage.getItem('kpa-user-phone');
-    setUserPhone(phone);
+    if (phone) {
+      setUserPhone(phone);
+    }
   }, []);
 
   return { userPhone };
