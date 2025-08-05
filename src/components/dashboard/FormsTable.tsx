@@ -1,8 +1,10 @@
-'use server';
+'use client';
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { FileText } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { useEffect, useState } from 'react';
+import { useAuth } from '@/lib/hooks';
 
 type Form = {
   id: string;
@@ -13,13 +15,49 @@ type Form = {
   submittedAt: string;
 };
 
-type FormsTableProps = {
-    initialForms: Form[];
-}
+export function FormsTable({ initialForms }: { initialForms: Form[] }) {
+  const [forms, setForms] = useState<Form[]>(initialForms);
+  const { userPhone } = useAuth();
 
-export async function FormsTable({ initialForms }: FormsTableProps) {
-  
-  if (!initialForms || initialForms.length === 0) {
+  useEffect(() => {
+    async function fetchForms() {
+      if (userPhone) {
+        // Fetch forms for the current user
+        const response = await fetch(`/api/forms?phone=${userPhone}`);
+        if (response.ok) {
+          const data = await response.json();
+          setForms(data);
+        }
+      }
+    }
+    fetchForms();
+  }, [userPhone]); // Re-fetch when userPhone is available or changes
+
+  useEffect(() => {
+    // This effect is to listen for the custom event and refetch forms
+    const handleFormSubmitted = () => {
+      async function refetchForms() {
+        if (userPhone) {
+          const response = await fetch(`/api/forms?phone=${userPhone}`);
+          if (response.ok) {
+            const data = await response.json();
+            setForms(data);
+          }
+        }
+      }
+      refetchForms();
+    };
+
+    window.addEventListener('form-submitted', handleFormSubmitted);
+
+    // Cleanup the event listener when the component unmounts
+    return () => {
+      window.removeEventListener('form-submitted', handleFormSubmitted);
+    };
+  }, [userPhone]);
+
+
+  if (!forms || forms.length === 0) {
     return (
         <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-12 text-center">
             <FileText className="mx-auto h-12 w-12 text-muted-foreground" />
@@ -28,6 +66,9 @@ export async function FormsTable({ initialForms }: FormsTableProps) {
       </div>
     );
   }
+
+  // Sort forms by submittedAt date in descending order (most recent first)
+  const sortedForms = [...forms].sort((a, b) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime());
 
   return (
     <div className="rounded-md border">
@@ -41,7 +82,7 @@ export async function FormsTable({ initialForms }: FormsTableProps) {
             </TableRow>
         </TableHeader>
         <TableBody>
-            {initialForms.map((form) => (
+            {sortedForms.map((form) => (
             <TableRow key={form.id}>
                 <TableCell className="font-medium">{form.customerName}</TableCell>
                 <TableCell>{form.projectName}</TableCell>

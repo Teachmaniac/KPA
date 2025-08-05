@@ -1,23 +1,13 @@
 import { AddForm } from '@/components/dashboard/AddForm';
 import { FormsTable } from '@/components/dashboard/FormsTable';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { getForms } from '@/lib/actions';
-import { headers } from 'next/headers';
 
-// This is a mock authentication check. In a real app, you'd use a more robust solution.
-async function getAuthenticatedUserPhone() {
-  const userPhone = headers().get('x-user-phone');
-  return userPhone;
-}
-
+// No longer need getForms or headers here
 
 export default async function DashboardPage() {
-  const userPhone = await getAuthenticatedUserPhone();
-  let forms = [];
-  if (userPhone) {
-    const result = await getForms(userPhone);
-    forms = result.forms;
-  }
+  // The initial fetch is now handled inside FormsTable to ensure it can re-fetch.
+  // We can pass an empty array initially.
+  const initialForms = [];
 
   return (
     <div className="container mx-auto grid gap-12">
@@ -37,11 +27,12 @@ export default async function DashboardPage() {
         <CardHeader>
             <CardTitle className="font-headline">Submitted Forms</CardTitle>
             <CardDescription>
-            Here are the forms you have submitted via the API.
+            Here are the forms you have submitted.
             </CardDescription>
         </CardHeader>
         <CardContent>
-            <FormsTable initialForms={forms} />
+            {/* FormsTable is now a client component and will fetch its own data */}
+            <FormsTable initialForms={initialForms} />
         </CardContent>
       </Card>
     </div>

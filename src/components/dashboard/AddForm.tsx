@@ -48,7 +48,10 @@ export function AddForm() {
           description: result.success,
         });
         form.reset();
-        router.refresh(); // Refreshes server components, re-fetching data in FormsTable
+        
+        // Instead of router.refresh(), dispatch a custom event
+        window.dispatchEvent(new CustomEvent('form-submitted'));
+
       } else if (result.error) {
         toast({
           title: 'Submission Failed',
