@@ -28,6 +28,6 @@ To get a local copy up and running, follow these steps.
 *   Node.js (v18 or higher recommended)
 *   npm or yarn or pnpm
 
-### Cloning the Repository
+
 
 
