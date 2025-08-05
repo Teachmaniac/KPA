@@ -4,6 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { getForms } from '@/lib/actions';
 import { headers } from 'next/headers';
 
+export const dynamic = 'force-dynamic';
+
 export default async function DashboardPage() {
   const headerList = headers();
   // The phone number is passed from the layout after client-side auth check
