@@ -1,12 +1,12 @@
+
 'use client';
 
 import { useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next/navigation';
 import { addFormSchema, type AddFormSchema } from '@/lib/schemas';
 import { addForm } from '@/lib/actions';
-import { useAuth } from '@/lib/hooks';
+import { useAuth, useFormRefresh } from '@/lib/hooks';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -15,9 +15,9 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
 
 export function AddForm() {
-  const router = useRouter();
   const { toast } = useToast();
   const { userPhone } = useAuth();
+  const { refresh } = useFormRefresh();
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<AddFormSchema>({
@@ -48,10 +48,7 @@ export function AddForm() {
           description: result.success,
         });
         form.reset();
-        
-        // Refresh the server components on the page to refetch data
-        router.refresh();
-
+        refresh(); // Trigger the refresh
       } else if (result.error) {
         toast({
           title: 'Submission Failed',

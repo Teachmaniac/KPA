@@ -1,19 +1,9 @@
+
 import { AddForm } from '@/components/dashboard/AddForm';
 import { FormsTable } from '@/components/dashboard/FormsTable';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { getForms } from '@/lib/actions';
-import { headers } from 'next/headers';
 
-export const dynamic = 'force-dynamic';
-
-export default async function DashboardPage() {
-  const headerList = headers();
-  // The phone number is passed from the layout after client-side auth check
-  const phone = headerList.get('x-user-phone');
-
-  // Fetch forms on the server. This will re-run when the page is refreshed.
-  const { forms } = phone ? await getForms(phone) : { forms: [] };
-
+export default function DashboardPage() {
   return (
     <div className="container mx-auto grid gap-12">
       <Card>
@@ -36,7 +26,7 @@ export default async function DashboardPage() {
             </CardDescription>
         </CardHeader>
         <CardContent>
-            <FormsTable forms={forms} />
+            <FormsTable />
         </CardContent>
       </Card>
     </div>

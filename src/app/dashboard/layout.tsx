@@ -1,12 +1,15 @@
+
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Header } from '@/components/dashboard/Header';
 import { Skeleton } from '@/components/ui/skeleton';
+import { FormRefreshProvider } from '@/lib/hooks';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  const pathname = usePathname();
   const [isAuth, setIsAuth] = useState(false);
 
   useEffect(() => {
@@ -16,7 +19,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     } else {
       setIsAuth(true);
     }
-  }, [router]);
+  }, [router, pathname]);
 
   if (!isAuth) {
     return (
@@ -36,9 +39,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }
 
   return (
-    <div className="flex min-h-screen w-full flex-col bg-background">
-      <Header />
-      <main className="flex-1 p-4 md:p-8">{children}</main>
-    </div>
+    <FormRefreshProvider>
+      <div className="flex min-h-screen w-full flex-col bg-background">
+        <Header />
+        <main className="flex-1 p-4 md:p-8">{children}</main>
+      </div>
+    </FormRefreshProvider>
   );
 }
