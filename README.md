@@ -1,6 +1,4 @@
-
-
-# Form Management Application
+**# Form Management Application
 
 This is a Next.js project that provides a simple application for managing forms. It allows users to view, add, and potentially interact with form data.
 
@@ -32,5 +30,26 @@ To get a local copy up and running, follow these steps.
 
 ### Cloning the Repository
 
+```bash
+git clone https://github.com/your-username/your-repository-name.git
+cd your-repository-name
+```
 
+### Installation
 
+Install the project dependencies:
+
+```bash
+npm install
+```
+
+### Running the Application
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**
